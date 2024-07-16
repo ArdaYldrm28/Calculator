@@ -1,0 +1,57 @@
+﻿@model Calculator.Common.Dto.AddDto1
+@{
+    ViewData["Title"] = "Hesap Makinesi";
+}
+
+<h2>Hesap Makinesi</h2>
+
+<form id="calculatorForm">
+    <div>
+        <label for="number1">Sayı 1:</label>
+        <input type="number" id="number1" name="number1" required>
+    </div>
+    <div>
+        <label for="number2">Sayı 2:</label>
+        <input type="number" id="number2" name="number2" required>
+    </div>
+    <div>
+        <label for="operation">İşlem:</label>
+        <select id="operation" name="operation">
+            <option value="add">Toplama</option>
+            <option value="subtract">Çıkarma</option>
+            <option value="multiply">Çarpma</option>
+            <option value="divide">Bölme</option>
+        </select>
+    </div>
+    <button type="submit">Hesapla</button>
+</form>
+
+<h3>Sonuç:  <span id="result"></span></h3>
+@Html.TextBoxFor(model => model.Result,new{@class="form-control",type="text"})
+
+
+@section Scripts {
+    <script>
+        document.getElementById('calculatorForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var number1 = document.getElementById('number1').value;
+            var number2 = document.getElementById('number2').value;
+            var operation = document.getElementById('operation').value;
+            var url = '/api/calculator/' + operation;
+            var data = { number1: number1, number2: number2 };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('result').textContent = result.value;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+}
